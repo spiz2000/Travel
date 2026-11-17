@@ -19,18 +19,25 @@
         body { background: var(--bg-gradient); color: var(--text-main); line-height: 1.6; }
 
         .header {
-            background: linear-gradient(135deg, #0A2540 0%, #0077b6 100%);
+            position: relative;
+            /* Removed the dark gradient overlay so the image shows in full, vibrant color */
+            background: url('banner.jpg') no-repeat center center;
+            background-size: cover;
             color: #ffffff;
             text-align: center;
-            padding: 60px 20px 80px 20px;
+            padding: 90px 20px 110px 20px;
+            /* Added a crisp text-shadow to keep the text readable against the bright background */
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 0, 0, 0.4);
         }
-        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
-        .header p { font-size: 1.15rem; color: #caf0f8; max-width: 650px; margin: 0 auto; }
+        .header h1 { font-size: 2.8rem; margin-bottom: 12px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { font-size: 1.25rem; color: #ffffff; max-width: 700px; margin: 0 auto; font-weight: 600; }
 
         .container {
             max-width: 1050px;
             margin: -45px auto 50px auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 10;
         }
 
         .grid {
@@ -71,6 +78,12 @@
             font-weight: bold;
             flex-shrink: 0;
             overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .advisor-header h2 { color: var(--travel-blue); font-size: 1.5rem; margin-bottom: 4px; }
         .advisor-header span { color: var(--travel-teal); font-weight: 600; font-size: 0.95rem; }
@@ -86,6 +99,11 @@
             justify-content: space-between;
             align-items: center;
             gap: 15px;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        .portal-item:hover {
+            border-color: var(--travel-teal);
+            transform: translateY(-1px);
         }
         .portal-item strong { display: block; color: var(--travel-blue); font-size: 1rem; }
         .portal-item small { color: var(--text-muted); font-size: 0.85rem; }
@@ -99,6 +117,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             white-space: nowrap;
+            transition: background 0.2s;
         }
         .btn-link:hover { background: var(--travel-blue); }
 
@@ -141,9 +160,10 @@
             border-radius: 8px;
             font-size: 1.05rem;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
         button[type="submit"]:hover { background: #c19b2e; }
+        button[type="submit"]:active { transform: scale(0.99); }
 
         .direct-contact {
             margin-top: 30px;
@@ -170,7 +190,9 @@
             <!-- Left Column: Advisor Info & Direct Portals -->
             <div class="card">
                 <div class="advisor-header">
-                    <div class="avatar-circle">SP</div>
+                    <div class="avatar-circle">
+                        <img src="avatar.png" alt="Stephen Pizarro" onerror="this.style.display='none'; this.parentElement.innerText='SP';">
+                    </div>
                     <div>
                         <h2>Stephen Pizarro</h2>
                         <span>Independent Travel Advisor | Cruise Brothers</span>
@@ -185,21 +207,21 @@
                             <strong>Cruise Brothers Hub</strong>
                             <small>Access client portfolio & booking engine</small>
                         </div>
-                        <a href="https://stephen-pizarro.cruisebrothers.com/cb/" class="btn-link" target="_blank">Launch</a>
+                        <a href="https://stephen-pizarro.cruisebrothers.com/cb/" class="btn-link" target="_blank" rel="noopener noreferrer">Launch</a>
                     </li>
                     <li class="portal-item">
                         <div>
                             <strong>CruisingPower / Espresso</strong>
                             <small>Royal Caribbean Group inventory</small>
                         </div>
-                        <a href="https://www.cruisingpower.com" class="btn-link" target="_blank">Open</a>
+                        <a href="https://www.cruisingpower.com" class="btn-link" target="_blank" rel="noopener noreferrer">Open</a>
                     </li>
                     <li class="portal-item">
                         <div>
                             <strong>GoCCL Portal</strong>
                             <small>Carnival Cruise Line reservations</small>
                         </div>
-                        <a href="https://www.goccl.com" class="btn-link" target="_blank">Open</a>
+                        <a href="https://www.goccl.com" class="btn-link" target="_blank" rel="noopener noreferrer">Open</a>
                     </li>
                 </ul>
 
@@ -208,35 +230,44 @@
                 </div>
             </div>
 
-            <!-- Right Column: Direct-to-Gmail Form -->
+            <!-- Right Column: Reliable JavaScript-powered Mailto Form with Subject Filling -->
             <div class="card form-card">
                 <h3>Plan Your Next Voyage</h3>
-                <p>Fill out your details and trip notes below for a custom consultation.</p>
+                <p>Fill out your details below to open an email draft directly to our inbox.</p>
                 
-                <form action="https://formsubmit.co/pizaroservices@gmail.com" method="POST">
-                    <!-- Honeypot spam protection -->
-                    <input type="text" name="_honey" style="display:none">
-                    
-                    <!-- Disable captcha redirect for a clean user experience -->
-                    <input type="hidden" name="_captcha" value="false">
-                    
-                    <!-- Email Subject Line -->
-                    <input type="hidden" name="_subject" value="New Travel Inquiry from Website!">
-
+                <form id="inquiry-form" onsubmit="sendInquiry(event)">
                     <div class="form-group">
                         <label for="travel-name">Full Name</label>
-                        <input type="text" id="travel-name" name="Name" placeholder="Jane Doe" required>
+                        <input type="text" id="travel-name" placeholder="Jane Doe" required>
                     </div>
                     <div class="form-group">
                         <label for="travel-email">Email Address</label>
-                        <input type="email" id="travel-email" name="Email" placeholder="jane@example.com" required>
+                        <input type="email" id="travel-email" placeholder="jane@example.com" required>
                     </div>
                     <div class="form-group">
                         <label for="travel-message">Trip Details / Message</label>
-                        <textarea id="travel-message" name="Message" rows="4" placeholder="Tell me about your ideal destination, dates, or cruise line..."></textarea>
+                        <textarea id="travel-message" rows="4" placeholder="Tell me about your ideal destination, dates, or cruise line..." required></textarea>
                     </div>
-                    <button type="submit">Submit Travel Inquiry</button>
+                    <button type="submit">Open Email to Send Inquiry</button>
                 </form>
+
+                <script>
+                    function sendInquiry(event) {
+                        event.preventDefault();
+                        const name = document.getElementById('travel-name').value;
+                        const email = document.getElementById('travel-email').value;
+                        const message = document.getElementById('travel-message').value;
+
+                        const subject = encodeURIComponent("New Travel Inquiry: " + name);
+                        const body = encodeURIComponent(
+                            "Name: " + name + "\n" +
+                            "Email: " + email + "\n\n" +
+                            "Trip Details:\n" + message
+                        );
+
+                        window.location.href = "mailto:pizaroservices@gmail.com?subject=" + subject + "&body=" + body;
+                    }
+                </script>
             </div>
         </div>
     </div>
